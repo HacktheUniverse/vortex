@@ -84,7 +84,6 @@ function init() {
 
   // listen to resize event
   window.addEventListener('resize', onWindowResize, false);
-  window.addEventListener('keypress', detonate, false );
 
 	addStars();
 	addPlanets(20);
@@ -359,12 +358,6 @@ function onWindowResize() {
   render();
 };
 
-function detonate(){
-  if (planetToExplode > -1) {
-    shouldExplodePlanet = true;    
-  };
-};
-
 $(function(){
   init();
   var timeout = null;
@@ -389,7 +382,7 @@ $(function(){
     coords3.position = cameraControls.target;
     light.position   = camera.position;
 
-    if(shouldExplodePlanet && planetToExplode > -1) {
+    if(planetToExplode > -1) {
       // planetToKill.geometry.radius 
       // planetToKill.geometry.verticesNeedUpdate = true;
       explosionObjects[planetToExplode].update();
