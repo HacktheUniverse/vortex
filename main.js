@@ -2,6 +2,14 @@ var camera, scene, renderer, projector, light;
 var objects = [], objectsControls = [], cameraControls;
 var coords1, coords2, coords3;
 var lastControlsIndex = -1, controlsIndex = -1, index = -1;
+var planetToExplode = null;
+//////////////settings/////////
+var dirs = [];
+var movementSpeed = 80;
+var totalObjects = 1000;
+var objectSize = 10;
+var sizeRandomness = 4000;
+/////////////////////////////////
 
 function init() {
   // is webgl supported?
@@ -113,6 +121,7 @@ function init() {
 
   // listen to resize event
   window.addEventListener('resize', onWindowResize, false);
+  window.addEventListener('keypress', detonate, false );
 
   // render (if no leap motion controller is detected, then this call is needed in order to see the plot)
   render();
@@ -123,9 +132,16 @@ function changeControlsIndex() {
     if (index != controlsIndex && controlsIndex > -2) {
       // new object or camera to control
       if (controlsIndex > -2) {
-        if (index > -1) objects[index].material.color.setHex(0xefefef);
+        if (index > -1) { 
+          planetToExplode = null;        
+          objects[index].material.color.setHex(0xefefef);
+           };
+
         index = controlsIndex;
-        if (index > -1) objects[index].material.color.setHex(0xff0000);
+        if (index > -1) { 
+          objects[index].material.color.setHex(0xff0000);
+          planetToExplode = {index: index, detonation: new ExplodeAnimation(objectsControls[index])}; 
+        };
       }
     };
   }; 
@@ -190,15 +206,98 @@ function focusObject(frame) {
   return -2;
 };
 
-function render() {
+function render() {   
   renderer.render(scene, camera);
 };
+
+function ExplodeAnimation(meshPlanet)
+{
+  // var radius = 100, segments = 68, rings = 38;
+  // var geometry = new THREE.SphereGeometry( radius, segments, rings );
+
+  // var sphere = new THREE.PointCloud( geometry );
+
+  // sphere.dynamic = true;
+  // sphere.sortParticles = true;
+  // sphere.position.x = meshPlanet.object.position.x;
+  // sphere.position.y = meshPlanet.object.position.y;
+  // sphere.position.z = meshPlanet.object.position.z;
+
+  // var vertices = sphere.geometry.vertices;
+  // for ( var v = 0; v < vertices.length; v ++ ) {
+  //   dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
+  // };
+
+  var geometry = new THREE.Geometry();
+
+  for (i = 0; i < totalObjects; i ++) 
+  { 
+    var vertex = new THREE.Vector3();
+    vertex.x = meshPlanet.object.position.x;
+    vertex.y = meshPlanet.object.position.y;
+    vertex.z = meshPlanet.object.position.z;
+  
+    geometry.vertices.push( vertex );
+    dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
+  }
+  var material = new THREE.ParticleBasicMaterial( { size: objectSize,  color: 0x000000 });
+  var particles = new THREE.ParticleSystem( geometry, material );
+  
+  this.object = particles;
+  this.status = true;
+  
+  this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  
+  scene.add( this.object  ); 
+
+  this.update = function(){
+    if (this.status == true){
+      var pCount = totalObjects;
+      while(pCount--) {
+        var particle =  this.object.geometry.vertices[pCount]
+        particle.y += dirs[pCount].y;
+        particle.x += dirs[pCount].x;
+        particle.z += dirs[pCount].z;
+      }
+      this.object.geometry.verticesNeedUpdate = true;
+    }
+  }
+
+  // this.update = function(){
+  //   if (this.status == true){
+  //     for ( var v = 0; v < vertices.length; v ++ ) {
+  //       var particle =  vertices[v]
+  //       particle.y += dirs[v].y;
+  //       particle.x += dirs[v].x;
+  //       particle.z += dirs[v].z;
+  //     }
+  //     this.object.geometry.verticesNeedUpdate = true;
+  //   }
+  // }
+  
+};
+
 
 function onWindowResize() {
   camera.aspect = $(window).width()/$(window).height();
   camera.updateProjectionMatrix();
   renderer.setSize($(window).width(), $(window).height());
   render();
+};
+
+function detonate(){
+  // shrink the selected object
+
+  var planetToKill = objects[planetToExplode.index];
+  // planetToKill.geometry.radius 
+  // planetToKill.geometry.verticesNeedUpdate = true;
+
+  if (planetToExplode !== null) {
+    planetToExplode.detonation.update();
+  }
+  scene.remove(planetToKill);
 };
 
 $(function(){
