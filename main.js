@@ -1,5 +1,6 @@
 var camera, scene, renderer, projector, light;
 var objects = [], objectsControls = [], cameraControls;
+var planets = [];
 var coords1, coords2, coords3;
 var lastControlsIndex = -1, controlsIndex = -1, index = -1;
 var planetsToExplode = [];
@@ -154,7 +155,7 @@ function addStars() {
 		  transparent: true
 		});
 		
-		for(var j=0; j<1000; j++) {
+		for(var j=0; j<3000; j++) {
       x = (Math.random() - .5 ) * FAR/8;
       y = (Math.random() - .5 ) * FAR/8;
       z = (Math.random() - .5 ) * FAR/8;
@@ -178,15 +179,11 @@ function getPlanetMaterialParams(planetName) {
 			break;
 		case 'jupiter':
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/jupitermap.jpg");
-			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/jupitermap.jpg");
-			params['bumpScale'] = 0.00;
 			break;
 		case 'mars':
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/marsmap1k.jpg");
-			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/marsmap1k.jpg");
-			params['bumpScale'] = 0.02;
 			break;
-		case 'mercury':
+		case 'mercury': 
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/mercurymap.jpg");
 			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/mercurybump.jpg");
 			params['bumpScale'] = 0.00;
@@ -203,13 +200,9 @@ function getPlanetMaterialParams(planetName) {
 			break;
 		case 'saturn':
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/saturnmap.jpg");
-			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/saturnmap.jpg");
-			params['bumpScale'] = 0.00;
 			break;
 		case 'uranus':
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/uranusmap.jpg");
-			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/uranusmap.jpg");
-			params['bumpScale'] = 0.00;
 			break;
 		case 'venus':
 			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/venusmap.jpg");
@@ -267,12 +260,13 @@ function addPlanets(n) {
     controls.panHands       = 2;
     controls.panFingers     = [6, 12];
     controls.panRightHanded = false; // for left-handed person
-
-    scene.add(sphere);
 		
     objects.push(sphere);
     objectsControls.push(controls);
-		
+		planets.push({
+			object: sphere,
+			rotationSpeed: Math.random() * 0.10
+		})
 		
 		scene.add(sphere);
 	}
@@ -387,6 +381,11 @@ $(function(){
     coords2.position = cameraControls.target;
     coords3.position = cameraControls.target;
     light.position   = camera.position;
+
+		for(var i=0; i < planets.length; i++) {
+			planets[i].object.rotation.y += planets[i].rotationSpeed;
+		}
+
 
     render();
   });
