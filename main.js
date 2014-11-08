@@ -77,44 +77,6 @@ function init() {
   var coords = new THREE.Line(lineGeometry, lineMaterial);
   scene.add(coords);
 
-  // spheres
-  // for (var i = 0; i < 20; i ++) {
-//     var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
-//     var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
-//     object.position.x = Math.random()* 300 - 150;
-//     object.position.y = Math.random()* 300 - 150;
-//     object.position.z = Math.random()* 200 - 100;
-//
-//     object.rotation.x = Math.random()*2*Math.PI;
-//     object.rotation.y = Math.random()*2*Math.PI;
-//     object.rotation.z = Math.random()*2*Math.PI;
-//
-//     object.receiveShadow = true;
-//
-//     // leap object controls
-//     var objectControls = new THREE.LeapObjectControls(camera, object);
-//
-//     objectControls.rotateEnabled  = true;
-//     objectControls.rotateSpeed    = 3;
-//     objectControls.rotateHands    = 1;
-//     objectControls.rotateFingers  = [2, 3];
-//
-//     objectControls.scaleEnabled   = true;
-//     objectControls.scaleSpeed     = 3;
-//     objectControls.scaleHands     = 1;
-//     objectControls.scaleFingers   = [4, 5];
-//
-//     objectControls.panEnabled     = true;
-//     objectControls.panSpeed       = 3;
-//     objectControls.panHands       = 2;
-//     objectControls.panFingers     = [6, 12];
-//     objectControls.panRightHanded = false; // for left-handed person
-//
-//     scene.add(object);
-//     objects.push(object);
-//     objectsControls.push(objectControls);
-//   };
-
   // light
   light = new THREE.PointLight(0xefefef);
   light.position = camera.position;
@@ -280,9 +242,9 @@ function addPlanets(n) {
 		material = new THREE.MeshPhongMaterial(materialParams);
 		
 		sphere = new THREE.Mesh(geometry, material);
-    sphere.position.x = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
-    sphere.position.y = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
-    sphere.position.z = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
+    sphere.position.x = Math.floor((Math.random() * 40 - Math.random() * 40) * i) * 4 + 40;
+    sphere.position.y = Math.floor((Math.random() * 40 - Math.random() * 40) * i)  * 4 + 40;
+    sphere.position.z = Math.floor((Math.random() * 40 - Math.random() * 40) * i)  * 4 + 40;
 		
 		sphere.receiveShadow = true;
 		
@@ -416,7 +378,7 @@ $(function(){
     if (index == -1) {
       cameraControls.update(frame);
     } else {
-      planetsToExplode.push(new ExplodeAnimation(objectsControls[index]));
+      // planetsToExplode.push(new ExplodeAnimation(objectsControls[index]));
       objectsControls[index].update(frame);
     };
 
