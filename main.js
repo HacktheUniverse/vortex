@@ -12,6 +12,11 @@ var sizeRandomness = 4000;
 var shouldExplodePlanet = false;
 /////////////////////////////////
 
+var audio = document.createElement('audio');
+var source = document.createElement('source');
+source.src = 'assets/music/death_theme.mp3';
+audio.appendChild(source);
+
 function init() {
   // is webgl supported?
   if (!Detector.webgl) {
@@ -261,6 +266,7 @@ function focusObject(frame) {
   var fl = frame.pointables.length;
 
   if (hl == 1 && fl == 1) {
+    audio.play();
     var f = frame.pointables[0];
     var cont = $(renderer.domElement);
     var coords = transform(f.tipPosition, cont.width(), cont.height());
@@ -275,7 +281,7 @@ function focusObject(frame) {
       while(!intersects[i].object.visible) i++;
       var intersected = intersects[i];
       return objects.indexOf(intersected.object);
-    } else {
+    } else {      
       return -1;
     };
   };
