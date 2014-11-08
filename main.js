@@ -60,23 +60,6 @@ function init() {
   // projector
   projector = new THREE.Projector();       
 
-  // camera target coordinate system
-  coords1 = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin, 75, 0xcccccc);
-  coords2 = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), origin, 75, 0xcccccc);
-  coords3 = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin, 75, 0xcccccc);
-  scene.add(coords1);
-  scene.add(coords2);
-  scene.add(coords3);
-
-  // world coordinate system (thin dashed helping lines)
-  var lineGeometry = new THREE.Geometry();
-  var vertArray = lineGeometry.vertices;
-  vertArray.push(new THREE.Vector3(1000, 0, 0), origin, new THREE.Vector3(0, 1000, 0), origin, new THREE.Vector3(0, 0, 1000));
-  lineGeometry.computeLineDistances();
-  var lineMaterial = new THREE.LineDashedMaterial({color: 0xcccccc, dashSize: 1, gapSize: 2});
-  var coords = new THREE.Line(lineGeometry, lineMaterial);
-  scene.add(coords);
-
   // light
   light = new THREE.PointLight(0xefefef);
   light.position = camera.position;
@@ -96,7 +79,6 @@ function changeControlsIndex() {
   if (lastControlsIndex == controlsIndex) {
     if (index != controlsIndex && controlsIndex > -2) {
       // new object or camera to control
-			console.log(controlsIndex);
 			if (controlsIndex > -2) {
         if (index > -1) { 
           planetToExplode = -1;        
@@ -310,7 +292,7 @@ function ExplodeAnimation(x, y, z)
   // var actualStar = objects[index];
   var geometry = new THREE.Geometry();
 
-	this.count = 10000;
+	this.count = 1000;
 
   // for (i = 0; i < actualStar.geometry.vertices.length; i ++) 
   for (i = 0; i < totalObjects; i ++) 
@@ -348,6 +330,7 @@ function ExplodeAnimation(x, y, z)
 	      // check if particle x y z values are out of the window frame
 	      // if so, then set status to false and remove the other stuff
 	      this.object.geometry.verticesNeedUpdate = true;
+				this.object.geometry.__dirtyVertices = true;
 
 	    }; 
 		}
@@ -381,11 +364,7 @@ $(function(){
       objectsControls[index].update(frame);
     };
 
-    // custom modifications (here: show coordinate system always on target and light movement)
-    coords1.position = cameraControls.target;
-    coords2.position = cameraControls.target;
-    coords3.position = cameraControls.target;
-    light.position   = camera.position;
+		light.position   = camera.position;
 
     if(planetToExplode > -1) {
       var planetToKill = objects[planetToExplode];
