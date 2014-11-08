@@ -96,7 +96,8 @@ function changeControlsIndex() {
   if (lastControlsIndex == controlsIndex) {
     if (index != controlsIndex && controlsIndex > -2) {
       // new object or camera to control
-      if (controlsIndex > -2) {
+			console.log(controlsIndex);
+			if (controlsIndex > -2) {
         if (index > -1) { 
           planetToExplode = -1;        
           objects[index].material.color.setHex(0xefefef);
@@ -105,7 +106,7 @@ function changeControlsIndex() {
         index = controlsIndex;
         if (index > -1) { 
           objects[index].material.color.setHex(0xff0000);
-          planetToExplode = index; 
+          planetToExplode = index;
         };
       }
     };
@@ -309,6 +310,8 @@ function ExplodeAnimation(x, y, z)
   // var actualStar = objects[index];
   var geometry = new THREE.Geometry();
 
+	this.count = 10000;
+
   // for (i = 0; i < actualStar.geometry.vertices.length; i ++) 
   for (i = 0; i < totalObjects; i ++) 
   { 
@@ -332,20 +335,22 @@ function ExplodeAnimation(x, y, z)
   
   scene.add(this.object); 
   this.update = function(){
-    if (this.status == true){
-            // var pCount = actualStar.geometry.vertices.length;
-      var pCount = totalObjects;
-      while(pCount--) {
-        var particle =  this.object.geometry.vertices[pCount]
-        particle.y += dirs[pCount].y;
-        particle.x += dirs[pCount].x;
-        particle.z += dirs[pCount].z;
-      }
-      // check if particle x y z values are out of the window frame
-      // if so, then set status to false and remove the other stuff
-      this.object.geometry.verticesNeedUpdate = true;
+		if(this.count--) {
+	    if (this.status == true){
+	            // var pCount = actualStar.geometry.vertices.length;
+	      var pCount = totalObjects;
+	      while(pCount--) {
+	        var particle =  this.object.geometry.vertices[pCount]
+	        particle.y += dirs[pCount].y;
+	        particle.x += dirs[pCount].x;
+	        particle.z += dirs[pCount].z;
+	      }
+	      // check if particle x y z values are out of the window frame
+	      // if so, then set status to false and remove the other stuff
+	      this.object.geometry.verticesNeedUpdate = true;
 
-    }; 
+	    }; 
+		}
   };
   
 };
@@ -361,7 +366,7 @@ function onWindowResize() {
 $(function(){
   init();
   var timeout = null;
-
+	var explosions = [];
   // leap loop
   Leap.loop(function(frame) {
     // show cursor
@@ -383,16 +388,23 @@ $(function(){
     light.position   = camera.position;
 
     if(planetToExplode > -1) {
-      // planetToKill.geometry.radius 
-      // planetToKill.geometry.verticesNeedUpdate = true;
-      explosionObjects[planetToExplode].update();
       var planetToKill = objects[planetToExplode];
+			planetToKill.geometry.verticesNeedUpdate = true;
+			explosions.push(explosionObjects[planetToExplode]);
       scene.remove(planetToKill);
+			planetToExplode = -1;
     };
+		
+		for(var i=0; i<explosions.length; i++) {
+			if(explosions[i].count) {
+				explosions[i].update();
+			};
+		}
 
+		
+		changeControlsIndex();
     render();
+		
   });
 
-  // detect controls change
-  setInterval(changeControlsIndex, 250);
 });
