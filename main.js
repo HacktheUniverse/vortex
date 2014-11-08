@@ -1,5 +1,5 @@
 var camera, scene, renderer, projector, light;
-var objects = [], objectsControls = [], cameraControls;
+var objects = [], objectsControls = [], cameraControls, explosionObjects = [];
 var coords1, coords2, coords3;
 var lastControlsIndex = -1, controlsIndex = -1, index = -1;
 var planetToExplode = null;
@@ -9,6 +9,7 @@ var movementSpeed = 80;
 var totalObjects = 1000;
 var objectSize = 10;
 var sizeRandomness = 4000;
+var shouldExplodePlanet = false;
 /////////////////////////////////
 
 function init() {
@@ -105,7 +106,7 @@ function changeControlsIndex() {
         index = controlsIndex;
         if (index > -1) { 
           objects[index].material.color.setHex(0xff0000);
-          planetToExplode = {index: index, detonation: new ExplodeAnimation(objectsControls[index])}; 
+          planetToExplode = index; 
         };
       }
     };
@@ -230,7 +231,7 @@ function getRandomPlanetName(){
 
 
 function addPlanets(n) {
-	var randPlanetName, materialParams, geometry, material, sphere, controls;
+	var randPlanetName, materialParams, geometry, material, sphere, controls, explosionObject;
 
 	for(var i=0; i < n; i++ ) {
 		randPlanetName = getRandomPlanetName();
@@ -245,7 +246,6 @@ function addPlanets(n) {
     sphere.position.z = Math.floor((Math.random() * 40 - Math.random() * 40) * i)  * 4 + 40;
 		
 		sphere.receiveShadow = true;
-		
 		
     // leap object controls
 		controls = new THREE.LeapObjectControls(camera, sphere);
@@ -267,6 +267,8 @@ function addPlanets(n) {
     controls.panRightHanded = false; // for left-handed person
 		
     objects.push(sphere);
+    explosionObject = new ExplodeAnimation(sphere.position.x, sphere.position.y, sphere.position.z ); 
+    explosionObjects.push(explosionObject);
     objectsControls.push(controls);
 		scene.add(sphere);
 	}
@@ -303,48 +305,36 @@ function render() {
   renderer.render(scene, camera);
 };
 
-function ExplodeAnimation(meshPlanet)
+function ExplodeAnimation(x, y, z)
 {
-  // var radius = 100, segments = 68, rings = 38;
-  // var geometry = new THREE.SphereGeometry( radius, segments, rings );
-
-  // var sphere = new THREE.PointCloud( geometry );
-
-  // sphere.dynamic = true;
-  // sphere.sortParticles = true;
-  // sphere.position.x = meshPlanet.object.position.x;
-  // sphere.position.y = meshPlanet.object.position.y;
-  // sphere.position.z = meshPlanet.object.position.z;
-
-  // var vertices = sphere.geometry.vertices;
-  // for ( var v = 0; v < vertices.length; v ++ ) {
-  //   dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
-  // };
-
+  // var actualStar = objects[index];
   var geometry = new THREE.Geometry();
 
+  // for (i = 0; i < actualStar.geometry.vertices.length; i ++) 
   for (i = 0; i < totalObjects; i ++) 
   { 
     var vertex = new THREE.Vector3();
-    vertex.x = meshPlanet.object.position.x;
-    vertex.y = meshPlanet.object.position.y;
-    vertex.z = meshPlanet.object.position.z; 
+    vertex.x = x;
+    vertex.y = y;
+    vertex.z = z; 
     geometry.vertices.push( vertex );
     dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
   }
-  var material = new THREE.ParticleBasicMaterial( { size: objectSize,  color: 0x000000 });
+  var material = new THREE.ParticleBasicMaterial( { size: objectSize,  color: 0xFFFFFF });
   var particles = new THREE.ParticleSystem( geometry, material );
   
   this.object = particles;
+  // this.object = actualStar;
   this.status = true;
   
   this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
   this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
   this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
   
-  scene.add( this.object  ); 
+  scene.add(this.object); 
   this.update = function(){
     if (this.status == true){
+            // var pCount = actualStar.geometry.vertices.length;
       var pCount = totalObjects;
       while(pCount--) {
         var particle =  this.object.geometry.vertices[pCount]
@@ -352,21 +342,12 @@ function ExplodeAnimation(meshPlanet)
         particle.x += dirs[pCount].x;
         particle.z += dirs[pCount].z;
       }
+      // check if particle x y z values are out of the window frame
+      // if so, then set status to false and remove the other stuff
       this.object.geometry.verticesNeedUpdate = true;
-    }
-  }
 
-  // this.update = function(){
-  //   if (this.status == true){
-  //     for ( var v = 0; v < vertices.length; v ++ ) {
-  //       var particle =  vertices[v]
-  //       particle.y += dirs[v].y;
-  //       particle.x += dirs[v].x;
-  //       particle.z += dirs[v].z;
-  //     }
-  //     this.object.geometry.verticesNeedUpdate = true;
-  //   }
-  // }
+    }; 
+  };
   
 };
 
@@ -379,24 +360,19 @@ function onWindowResize() {
 };
 
 function detonate(){
-  // shrink the selected object
-
-  var planetToKill = objects[planetToExplode.index];
-  // planetToKill.geometry.radius 
-  // planetToKill.geometry.verticesNeedUpdate = true;
-
-  if (planetToExplode !== null) {
-    planetToExplode.detonation.update();
-  }
-  scene.remove(planetToKill);
+  if (planetToExplode > -1) {
+    shouldExplodePlanet = true;    
+  };
 };
 
 $(function(){
   init();
+  var timeout = null;
 
   // leap loop
   Leap.loop(function(frame) {
     // show cursor
+    
     showCursor(frame);
 
     // set correct camera control
@@ -404,7 +380,6 @@ $(function(){
     if (index == -1) {
       cameraControls.update(frame);
     } else {
-      // planetsToExplode.push(new ExplodeAnimation(objectsControls[index]));
       objectsControls[index].update(frame);
     };
 
@@ -414,6 +389,13 @@ $(function(){
     coords3.position = cameraControls.target;
     light.position   = camera.position;
 
+    if(shouldExplodePlanet && planetToExplode) {
+      // planetToKill.geometry.radius 
+      // planetToKill.geometry.verticesNeedUpdate = true;
+      explosionObjects[planetToExplode].update();
+      var planetToKill = objects[planetToExplode];
+      scene.remove(planetToKill);
+    };
 
     render();
   });
