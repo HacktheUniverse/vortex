@@ -1,14 +1,34 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <title>Three.js ・ Leap Controls</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Torsten Sprenger">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href='http://fonts.googleapis.com/css?family=Fauna+One' rel='stylesheet' type='text/css'>
+    <link href='css/style.css' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="js/Detector.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/three.min.js"></script>
+    <script type="text/javascript" src="js/leap.min.js"></script>
+    <script type="text/javascript" src="LeapCameraControls.js"></script>
+    <script type="text/javascript" src="LeapObjectControls.js"></script>
+    <script type="text/javascript" src="main.js"></script>
   </head>
 
   <body>
-    <h1>Hello, LeapJS (V2)!</h1>
-    <div id="output"></div>
-    
-    <script src="//js.leapmotion.com/leap-0.6.3.min.js"></script>
-    <script src="//js.leapmotion.com/leap-plugins-0.1.8.js"></script>
-    <script src="main.js"></script>
+    <div id="info">
+      <h3><b>threeleapcontrols</b> ・ <a href="http://leapmotion.com">Leap</a> Controls for <a href="http://threejs.org">Three.js</a></h3>
+
+      <h4>Camera &amp; Object Controls</h4>
+
+      <b>ROTATING</b> ➞ 1 Hand &amp; 2-3 Fingers ・  <b>ZOOMING/SCALING</b> ➞ 1 Hand &amp; 4-5 Fingers  ・  <b>PANNING</b> ➞ 2 Hands &amp; 6-10 Fingers
+
+      <h4>Switch between Camera &amp; Object Mode</h4>
+
+      <b>SWITCHING</b> ➞ 1 Hand &amp; 1 Finger &amp; Choose object or nothing
+    </div>
+    <div id="container"></div>
+    <div id="cursor"></div>
   </body>
 </html>
-
