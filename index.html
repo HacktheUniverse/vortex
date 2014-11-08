@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Torsten Sprenger">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link href='http://fonts.googleapis.com/css?family=Fauna+One' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/foundation.css" />
     <link href='css/style.css' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="js/Detector.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -14,21 +14,33 @@
     <script type="text/javascript" src="LeapCameraControls.js"></script>
     <script type="text/javascript" src="LeapObjectControls.js"></script>
     <script type="text/javascript" src="main.js"></script>
+    <script src="js/vendor/modernizr.js"></script>
   </head>
 
   <body>
-    <div id="info">
-      <h3><b>threeleapcontrols</b> ・ <a href="http://leapmotion.com">Leap</a> Controls for <a href="http://threejs.org">Three.js</a></h3>
+		<style>
+		body *{
+			color: #ddd;
+		}
+		</style>
+    <div class="row">
+      <div class="large-12 columns">
+        <div id="info">
+          <h4>Camera &amp; Object Controls</h4>
 
-      <h4>Camera &amp; Object Controls</h4>
+          <b>ROTATING</b> ➞ 1 Hand &amp; 2-3 Fingers ・  <b>ZOOMING/SCALING</b> ➞ 1 Hand &amp; 4-5 Fingers  ・  <b>PANNING</b> ➞ 2 Hands &amp; 6-10 Fingers
 
-      <b>ROTATING</b> ➞ 1 Hand &amp; 2-3 Fingers ・  <b>ZOOMING/SCALING</b> ➞ 1 Hand &amp; 4-5 Fingers  ・  <b>PANNING</b> ➞ 2 Hands &amp; 6-10 Fingers
+          <h4>Switch between Camera &amp; Object Mode</h4>
 
-      <h4>Switch between Camera &amp; Object Mode</h4>
-
-      <b>SWITCHING</b> ➞ 1 Hand &amp; 1 Finger &amp; Choose object or nothing
+          <b>SWITCHING</b> ➞ 1 Hand &amp; 1 Finger &amp; Choose object or nothing
+        </div>
+      </div>
     </div>
+    
     <div id="container"></div>
     <div id="cursor"></div>
   </body>
+
+  <script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation.min.js"></script>
 </html>
