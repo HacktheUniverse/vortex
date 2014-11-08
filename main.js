@@ -2,7 +2,7 @@ var camera, scene, renderer, projector, light;
 var objects = [], objectsControls = [], cameraControls, explosionObjects = [];
 var coords1, coords2, coords3;
 var lastControlsIndex = -1, controlsIndex = -1, index = -1;
-var planetToExplode = null;
+var planetToExplode = -1;
 //////////////settings/////////
 var dirs = [];
 var movementSpeed = 80;
