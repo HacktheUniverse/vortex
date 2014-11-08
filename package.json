@@ -1,1 +1,23 @@
-Hello
+{
+  "name": "vortex",
+  "version": "0.0.0",
+  "description": "vortex ======",
+  "main": "index.js",
+  "dependencies": {
+    "leapjs": "^0.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HacktheUniverse/vortex.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HacktheUniverse/vortex/issues"
+  },
+  "homepage": "https://github.com/HacktheUniverse/vortex"
+}
