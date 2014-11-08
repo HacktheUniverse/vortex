@@ -116,6 +116,7 @@ function transform(tipPosition, w, h) {
 };
 
 function showCursor(frame) {
+	
   var hl = frame.hands.length;
   var fl = frame.pointables.length;
 
@@ -127,6 +128,7 @@ function showCursor(frame) {
     $("#cursor").css('left', offset.left + coords[0] - (($("#cursor").width() - 1)/2 + 1));
     $("#cursor").css('top', offset.top + coords[1] - (($("#cursor").height() - 1)/2 + 1));
   } else {
+		document.getElementById("info").style.display = "hidden";
     $("#cursor").css('left', -1000);
     $("#cursor").css('top', -1000);
   };
@@ -258,6 +260,7 @@ function addPlanets(n) {
     explosionObjects.push(explosionObject);
     objectsControls.push(controls);
 		scene.add(sphere);
+		
 	}
 }
 
@@ -370,7 +373,9 @@ $(function(){
     } else {
       objectsControls[index].update(frame);
     };
-
+		
+		
+		
 		light.position   = camera.position;
 
     if(planetToExplode > -1) {
@@ -386,7 +391,8 @@ $(function(){
 				explosions[i].update();
 			};
 		}
-
+		
+		
 		
 		changeControlsIndex();
     render();
