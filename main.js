@@ -22,11 +22,11 @@ function init() {
   // renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize($(window).width(), $(window).height());
-  renderer.setClearColor(0xffffff, 1);
+  renderer.setClearColor(0x00000000, 1);
   $("#container").append(renderer.domElement);
 
   // camera
-  camera = new THREE.PerspectiveCamera(25, $(window).width()/$(window).height(), 0.1, 10000);
+  camera = new THREE.PerspectiveCamera(50, $(window).width()/$(window).height(), 0.1, 10000);
   camera.position.x = 500;
   camera.position.y = 500;
   camera.position.z = 500;
@@ -78,42 +78,42 @@ function init() {
   scene.add(coords);
 
   // spheres
-  for (var i = 0; i < 20; i ++) {
-    var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
-    var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
-    object.position.x = Math.random()* 300 - 150;
-    object.position.y = Math.random()* 300 - 150;
-    object.position.z = Math.random()* 200 - 100;
-
-    object.rotation.x = Math.random()*2*Math.PI;
-    object.rotation.y = Math.random()*2*Math.PI;
-    object.rotation.z = Math.random()*2*Math.PI;
-
-    object.receiveShadow = true;
-
-    // leap object controls
-    var objectControls = new THREE.LeapObjectControls(camera, object);
-
-    objectControls.rotateEnabled  = true;
-    objectControls.rotateSpeed    = 3;
-    objectControls.rotateHands    = 1;
-    objectControls.rotateFingers  = [2, 3];
-    
-    objectControls.scaleEnabled   = true;
-    objectControls.scaleSpeed     = 3;
-    objectControls.scaleHands     = 1;
-    objectControls.scaleFingers   = [4, 5];
-    
-    objectControls.panEnabled     = true;
-    objectControls.panSpeed       = 3;
-    objectControls.panHands       = 2;
-    objectControls.panFingers     = [6, 12];
-    objectControls.panRightHanded = false; // for left-handed person
-
-    scene.add(object);
-    objects.push(object);
-    objectsControls.push(objectControls);
-  };
+  // for (var i = 0; i < 20; i ++) {
+//     var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
+//     var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
+//     object.position.x = Math.random()* 300 - 150;
+//     object.position.y = Math.random()* 300 - 150;
+//     object.position.z = Math.random()* 200 - 100;
+//
+//     object.rotation.x = Math.random()*2*Math.PI;
+//     object.rotation.y = Math.random()*2*Math.PI;
+//     object.rotation.z = Math.random()*2*Math.PI;
+//
+//     object.receiveShadow = true;
+//
+//     // leap object controls
+//     var objectControls = new THREE.LeapObjectControls(camera, object);
+//
+//     objectControls.rotateEnabled  = true;
+//     objectControls.rotateSpeed    = 3;
+//     objectControls.rotateHands    = 1;
+//     objectControls.rotateFingers  = [2, 3];
+//
+//     objectControls.scaleEnabled   = true;
+//     objectControls.scaleSpeed     = 3;
+//     objectControls.scaleHands     = 1;
+//     objectControls.scaleFingers   = [4, 5];
+//
+//     objectControls.panEnabled     = true;
+//     objectControls.panSpeed       = 3;
+//     objectControls.panHands       = 2;
+//     objectControls.panFingers     = [6, 12];
+//     objectControls.panRightHanded = false; // for left-handed person
+//
+//     scene.add(object);
+//     objects.push(object);
+//     objectsControls.push(objectControls);
+//   };
 
   // light
   light = new THREE.PointLight(0xefefef);
@@ -123,6 +123,9 @@ function init() {
   // listen to resize event
   window.addEventListener('resize', onWindowResize, false);
   window.addEventListener('keypress', detonate, false );
+
+	addStars();
+	addPlanets(20);
 
   // render (if no leap motion controller is detected, then this call is needed in order to see the plot)
   render();
@@ -172,6 +175,146 @@ function showCursor(frame) {
     $("#cursor").css('top', -1000);
   };
 };
+
+function addStars() {
+	var FAR  = 10000;
+	var color = new THREE.Color(1, 1, 1);
+	var geometry, material, particleSystem;
+	var x, y, z;
+	
+	for(var i=0; i<10; i++) {
+		geometry = new THREE.Geometry();
+		material = new THREE.ParticleBasicMaterial({
+			color:0xFFFFFF,
+			size:2,
+			map: THREE.ImageUtils.loadTexture("assets/img/particle.png"),
+			blending: THREE.AdditiveBlending,
+		  transparent: true
+		});
+		
+		for(var j=0; j<1000; j++) {
+      x = (Math.random() - .5 ) * FAR/8;
+      y = (Math.random() - .5 ) * FAR/8;
+      z = (Math.random() - .5 ) * FAR/8;
+      geometry.vertices.push( new THREE.Vector3( x , y , z ) );
+		}
+		
+		particleSystem = new THREE.ParticleSystem(geometry, material);
+
+		scene.add(particleSystem);
+	}	
+}
+
+
+function getPlanetMaterialParams(planetName) {
+	var params = {};
+	switch(planetName) {
+		case 'earth':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/earthmap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/earthmap.jpg");
+			params['bumpScale'] = 0.05;
+			break;
+		case 'jupiter':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/jupitermap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/jupitermap.jpg");
+			params['bumpScale'] = 0.00;
+			break;
+		case 'mars':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/marsmap1k.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/marsmap1k.jpg");
+			params['bumpScale'] = 0.02;
+			break;
+		case 'mercury':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/mercurymap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/mercurybump.jpg");
+			params['bumpScale'] = 0.00;
+			break;
+		case 'neptune':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/neptunemap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/neptunemap.jpg");
+			params['bumpScale'] = 0.02;
+			break;
+		case 'pluto':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/plutomap1k.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/plutobump1k.jpg");
+			params['bumpScale'] = 0.00;
+			break;
+		case 'saturn':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/saturnmap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/saturnmap.jpg");
+			params['bumpScale'] = 0.00;
+			break;
+		case 'uranus':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/uranusmap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/uranusmap.jpg");
+			params['bumpScale'] = 0.00;
+			break;
+		case 'venus':
+			params['map'] = THREE.ImageUtils.loadTexture("assets/img/planets/venusmap.jpg");
+			params['bumpMap'] = THREE.ImageUtils.loadTexture("assets/img/planets/venusbump.jpg");
+			params['bumpScale'] = 0.02;
+			break;
+	}
+	
+	return params;
+};
+
+
+function getRandomPlanetName(){
+	var planetNames = ['earth', 'jupiter', 'mars', 
+										 'mercury', 'neptune', 'pluto', 
+										 'saturn', 'uranus', 'venus'];
+	var randNum = Math.floor(Math.random() * planetNames.length);
+	return planetNames[randNum];
+}
+
+
+function addPlanets(n) {
+	var randPlanetName, materialParams, geometry, material, sphere, controls;
+
+	for(var i=0; i < n; i++ ) {
+		randPlanetName = getRandomPlanetName();
+		materialParams = getPlanetMaterialParams(randPlanetName);
+		
+		geometry = new THREE.SphereGeometry(Math.floor(Math.random()*10) + 16, 32, 32);
+		material = new THREE.MeshPhongMaterial(materialParams);
+		
+		sphere = new THREE.Mesh(geometry, material);
+    sphere.position.x = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
+    sphere.position.y = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
+    sphere.position.z = Math.floor(Math.random() * 100) + (Math.floor(Math.random() * 70) * i);
+		
+		sphere.receiveShadow = true;
+		
+		
+    // leap object controls
+		controls = new THREE.LeapObjectControls(camera, sphere);
+
+    controls.rotateEnabled  = true;
+    controls.rotateSpeed    = 3;
+    controls.rotateHands    = 1;
+    controls.rotateFingers  = [2, 3];
+    
+    controls.scaleEnabled   = true;
+    controls.scaleSpeed     = 3;
+    controls.scaleHands     = 1;
+    controls.scaleFingers   = [4, 5];
+    
+    controls.panEnabled     = true;
+    controls.panSpeed       = 3;
+    controls.panHands       = 2;
+    controls.panFingers     = [6, 12];
+    controls.panRightHanded = false; // for left-handed person
+
+    scene.add(sphere);
+		
+    objects.push(sphere);
+    objectsControls.push(controls);
+		
+		
+		scene.add(sphere);
+	}
+}
 
 function focusObject(frame) {
   var hl = frame.hands.length;

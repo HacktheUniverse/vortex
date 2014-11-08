@@ -95,13 +95,37 @@
 				return params;
 			};
 			
-			var addPlanet = function(planetName) {
-				var materialsParams = getPlanetMaterialParams(planetName);
-				var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-				var material = new THREE.MeshPhongMaterial(materialsParams);
-				var sphere = new THREE.Mesh(geometry, material);
-				scene.add(sphere);
+			
+			var getRandomPlanetName = function(){
+				var planetNames = ['earth', 'jupiter', 'mars', 
+													 'mercury', 'neptune', 'pluto', 
+													 'saturn', 'uranus', 'venus'];
+				var randNum = Math.floor(Math.random() * planetNames.length);
+				return planetNames[randNum];
 			}
+			
+			
+			var addPlanets = function(n) {
+				var randPlanetName, materialParams, geometry, material, sphere;
+
+				for(var i=0; i < n; i++ ) {
+					randPlanetName = getRandomPlanetName();
+					materialParams = getPlanetMaterialParams(randPlanetName);
+					
+					geometry = new THREE.SphereGeometry(Math.floor(Math.random()*60) + 16, 32, 32);
+					material = new THREE.MeshPhongMaterial(materialParams);
+					
+					sphere = new THREE.Mesh(geometry, material);
+			    sphere.position.x = Math.floor(Math.random() * 300) - (50 * i);
+			    sphere.position.y = Math.floor(Math.random() * 300) - (50 * i);
+			    sphere.position.z = Math.floor(Math.random() * 400) - (50 * i);
+					
+					sphere.receiveShadow = true;
+					
+					scene.add(sphere);
+				}
+			}
+			
 			
 			var addStars = function() {
 				var color = new THREE.Color(1, 1, 1);
@@ -131,51 +155,6 @@
 				}	
 			}
 			
-			var getRandomPlanetName = function(){
-				var planetNames = ['earth', 'jupiter', 'mars', 
-													 'mercury', 'neptune', 'pluto', 
-													 'saturn', 'uranus', 'venus'];
-				var randNum = Math.floor(Math.random() * planetNames.length);
-				return planetNames[randNum];
-			}
-			
-			var addPlanets = function(n) {
-				for(var i=0; i<n; i++) {
-			    var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
-			    var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
-			    object.position.x = Math.random()* 300 - 150;
-			    object.position.y = Math.random()* 300 - 150;
-			    object.position.z = Math.random()* 200 - 100;
-
-			    object.rotation.x = Math.random()*2*Math.PI;
-			    object.rotation.y = Math.random()*2*Math.PI;
-			    object.rotation.z = Math.random()*2*Math.PI;
-
-			    object.receiveShadow = true;
-					scene.add(object);
-				}
-			}
-			
-			var addPlanets = function(n) {
-				var randPlanetName, materialParams, geometry, material, sphere;
-
-				for(var i=0; i < n; i++ ) {
-					randPlanetName = getRandomPlanetName();
-					materialParams = getPlanetMaterialParams(randPlanetName);
-					
-					geometry = new THREE.SphereGeometry(Math.floor(Math.random()*60) + 16, 32, 32);
-					material = new THREE.MeshPhongMaterial(materialParams);
-					
-					sphere = new THREE.Mesh(geometry, material);
-			    sphere.position.x = Math.floor(Math.random() * 300) - (50 * i);
-			    sphere.position.y = Math.floor(Math.random() * 300) - (50 * i);
-			    sphere.position.z = Math.floor(Math.random() * 400) - (50 * i);
-					
-					sphere.receiveShadow = true;
-					
-					scene.add(sphere);
-				}
-			}
 			
 			init();
 			addStars();
