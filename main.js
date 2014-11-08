@@ -31,14 +31,14 @@ function init() {
   cameraControls.rotateSpeed    = 3;
   cameraControls.rotateHands    = 1;
   cameraControls.rotateFingers  = [2, 3];
-  
+
   cameraControls.zoomEnabled    = true;
   cameraControls.zoomSpeed      = 6;
   cameraControls.zoomHands      = 1;
   cameraControls.zoomFingers    = [4, 5];
   cameraControls.zoomMin        = 50;
   cameraControls.zoomMax        = 2000;
-  
+
   cameraControls.panEnabled     = true;
   cameraControls.panSpeed       = 2;
   cameraControls.panHands       = 2;
@@ -46,10 +46,10 @@ function init() {
   cameraControls.panRightHanded = false; // for left-handed person
 
   // world
-  scene = new THREE.Scene(); 
+  scene = new THREE.Scene();
 
   // projector
-  projector = new THREE.Projector();       
+  projector = new THREE.Projector();
 
   // camera target coordinate system
   coords1 = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin, 75, 0xcccccc);
@@ -69,8 +69,8 @@ function init() {
   scene.add(coords);
 
   // spheres
-  for (var i = 0; i < 20; i ++) {
-    var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
+  for (var i = 0; i < 10; i ++) {
+    var geometry = new THREE.SphereGeometry(Math.random()*30, 64, 64);
     var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
     object.position.x = Math.random()* 300 - 150;
     object.position.y = Math.random()* 300 - 150;
@@ -89,12 +89,12 @@ function init() {
     objectControls.rotateSpeed    = 3;
     objectControls.rotateHands    = 1;
     objectControls.rotateFingers  = [2, 3];
-    
+
     objectControls.scaleEnabled   = true;
     objectControls.scaleSpeed     = 3;
     objectControls.scaleHands     = 1;
     objectControls.scaleFingers   = [4, 5];
-    
+
     objectControls.panEnabled     = true;
     objectControls.panSpeed       = 3;
     objectControls.panHands       = 2;
@@ -128,7 +128,7 @@ function changeControlsIndex() {
         if (index > -1) objects[index].material.color.setHex(0xff0000);
       }
     };
-  }; 
+  };
   lastControlsIndex = controlsIndex;
 };
 
@@ -177,7 +177,7 @@ function focusObject(frame) {
     projector.unprojectVector(vector, camera);
     var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
     var intersects = raycaster.intersectObjects(objects);
-    if (intersects.length > 0) { 
+    if (intersects.length > 0) {
       var i = 0;
       while(!intersects[i].object.visible) i++;
       var intersected = intersects[i];
