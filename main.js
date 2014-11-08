@@ -1,6 +1,5 @@
 var camera, scene, renderer, projector, light;
 var objects = [], objectsControls = [], cameraControls;
-var planets = [];
 var coords1, coords2, coords3;
 var lastControlsIndex = -1, controlsIndex = -1, index = -1;
 var planetsToExplode = [];
@@ -263,11 +262,6 @@ function addPlanets(n) {
 		
     objects.push(sphere);
     objectsControls.push(controls);
-		planets.push({
-			object: sphere,
-			rotationSpeed: Math.random() * 0.10
-		})
-		
 		scene.add(sphere);
 	}
 }
@@ -381,10 +375,6 @@ $(function(){
     coords2.position = cameraControls.target;
     coords3.position = cameraControls.target;
     light.position   = camera.position;
-
-		for(var i=0; i < planets.length; i++) {
-			planets[i].object.rotation.y += planets[i].rotationSpeed;
-		}
 
 
     render();
