@@ -302,6 +302,7 @@ function ExplodeAnimation(x, y, z)
     vertex.y = y;
     vertex.z = z; 
     geometry.vertices.push( vertex );
+		geometry.computeBoundingSphere();
     dirs.push({x:(Math.random() * movementSpeed)-(movementSpeed/2),y:(Math.random() * movementSpeed)-(movementSpeed/2),z:(Math.random() * movementSpeed)-(movementSpeed/2)});
   }
   var material = new THREE.ParticleBasicMaterial( { size: objectSize,  color: 0xFFFFFF });
