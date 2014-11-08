@@ -16,7 +16,7 @@ function init() {
   $("#container").append(renderer.domElement);
 
   // camera
-  camera = new THREE.PerspectiveCamera(45, $(window).width()/$(window).height(), 0.1, 10000);
+  camera = new THREE.PerspectiveCamera(50, $(window).width()/$(window).height(), 0.1, 10000);
 
   var origin = new THREE.Vector3(0, 0, 0);
   camera.lookAt(origin);
@@ -28,14 +28,14 @@ function init() {
   cameraControls.rotateSpeed    = 3;
   cameraControls.rotateHands    = 1;
   cameraControls.rotateFingers  = [2, 3];
-  
+
   cameraControls.zoomEnabled    = true;
   cameraControls.zoomSpeed      = 6;
   cameraControls.zoomHands      = 1;
   cameraControls.zoomFingers    = [4, 5];
   cameraControls.zoomMin        = 50;
   cameraControls.zoomMax        = 2000;
-  
+
   cameraControls.panEnabled     = true;
   cameraControls.panSpeed       = 2;
   cameraControls.panHands       = 2;
@@ -43,19 +43,21 @@ function init() {
   cameraControls.panRightHanded = false; // for left-handed person
 
   // world
-  scene = new THREE.Scene(); 
+  scene = new THREE.Scene();
+
 
 	// light
-	light	= new THREE.AmbientLight( 0x888888 );
+	light = new THREE.PointLight(0xefefef);
+	light.position = camera.position;
 	scene.add(light);
 
-	light	= new THREE.DirectionalLight( 0xcccccc, 1 );
-	light.position.set(5,3,5);
-	scene.add(light);
-
+  // light
+  light = new THREE.PointLight(0xefefef);
+  light.position = camera.position;
+  scene.add(light);
 
   // projector
-  projector = new THREE.Projector();       
+  projector = new THREE.Projector();
 
   // camera target coordinate system
   coords1 = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin, 75, 0xcccccc);
@@ -74,54 +76,12 @@ function init() {
   var coords = new THREE.Line(lineGeometry, lineMaterial);
   scene.add(coords);
 
-  // spheres
-  // for (var i = 0; i < 20; i ++) {
-//     var geometry = new THREE.SphereGeometry(Math.random()*60, 128, 128);
-//     var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xefefef}));
-//     object.position.x = Math.random()* 300 - 150;
-//     object.position.y = Math.random()* 300 - 150;
-//     object.position.z = Math.random()* 200 - 100;
-//
-//     object.rotation.x = Math.random()*2*Math.PI;
-//     object.rotation.y = Math.random()*2*Math.PI;
-//     object.rotation.z = Math.random()*2*Math.PI;
-//
-//     object.receiveShadow = true;
-//
-//     // leap object controls
-//     var objectControls = new THREE.LeapObjectControls(camera, object);
-//
-//     objectControls.rotateEnabled  = true;
-//     objectControls.rotateSpeed    = 3;
-//     objectControls.rotateHands    = 1;
-//     objectControls.rotateFingers  = [2, 3];
-//
-//     objectControls.scaleEnabled   = true;
-//     objectControls.scaleSpeed     = 3;
-//     objectControls.scaleHands     = 1;
-//     objectControls.scaleFingers   = [4, 5];
-//
-//     objectControls.panEnabled     = true;
-//     objectControls.panSpeed       = 3;
-//     objectControls.panHands       = 2;
-//     objectControls.panFingers     = [6, 12];
-//     objectControls.panRightHanded = false; // for left-handed person
-//
-//     scene.add(object);
-//     objects.push(object);
-//     objectsControls.push(objectControls);
-//   };
-
-
-	addPlanets(20);
+	// add star field
 	addStars();
-
-	// light
-	light = new THREE.PointLight(0xefefef);
-	light.position = camera.position;
-	scene.add(light);
-
 	
+	// add planets
+	addPlanets(20);
+
   // listen to resize event
   window.addEventListener('resize', onWindowResize, false);
 
@@ -140,7 +100,7 @@ function changeControlsIndex() {
         if (index > -1) objects[index].material.color.setHex(0xff0000);
       }
     };
-  }; 
+  };
   lastControlsIndex = controlsIndex;
 };
 
@@ -189,7 +149,7 @@ function focusObject(frame) {
     projector.unprojectVector(vector, camera);
     var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
     var intersects = raycaster.intersectObjects(objects);
-    if (intersects.length > 0) { 
+    if (intersects.length > 0) {
       var i = 0;
       while(!intersects[i].object.visible) i++;
       var intersected = intersects[i];
@@ -210,7 +170,7 @@ function addStars() {
 	
 	for(var i=0; i<10; i++) {
 		geometry = new THREE.Geometry();
-		material = new THREE.PointCloudMaterial({
+		material = new THREE.ParticleCanvasMaterial({
 			color:0xFFFFFF,
 			size:2,
 			map: THREE.ImageUtils.loadTexture("assets/img/particle.png"),
@@ -225,7 +185,7 @@ function addStars() {
       geometry.vertices.push( new THREE.Vector3( x , y , z ) );
 		}
 		
-		particleSystem = new THREE.PointCloud(geometry, material);
+		particleSystem = new THREE.ParticleSystem(geometry, material);
 
 		scene.add(particleSystem);
 	}	
@@ -308,7 +268,7 @@ function addPlanets(n) {
 		randPlanetName = getRandomPlanetName();
 		materialParams = getPlanetMaterialParams(randPlanetName);
 		
-		geometry = new THREE.SphereGeometry(Math.floor(Math.random()*60) + 16, 32, 32);
+		geometry = new THREE.SphereGeometry(Math.floor(Math.random()*20) + 16, 32, 32);
 		material = new THREE.MeshPhongMaterial(materialParams);
 		
 		sphere = new THREE.Mesh(geometry, material);
