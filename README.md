@@ -1,3 +1,9 @@
-vortex
+Vortex
 ======
-`python -m SimpleHTTPServer`
+
+```
+cd vortex
+python -m SimpleHTTPServer
+```
+
+http://hacktheuniverse.github.io/vortex/
