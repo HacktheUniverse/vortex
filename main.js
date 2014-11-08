@@ -99,7 +99,7 @@ function changeControlsIndex() {
       // new object or camera to control
       if (controlsIndex > -2) {
         if (index > -1) { 
-          planetToExplode = null;        
+          planetToExplode = -1;        
           objects[index].material.color.setHex(0xefefef);
            };
 
@@ -389,7 +389,7 @@ $(function(){
     coords3.position = cameraControls.target;
     light.position   = camera.position;
 
-    if(shouldExplodePlanet && planetToExplode) {
+    if(shouldExplodePlanet && planetToExplode > -1) {
       // planetToKill.geometry.radius 
       // planetToKill.geometry.verticesNeedUpdate = true;
       explosionObjects[planetToExplode].update();
